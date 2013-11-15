@@ -9,13 +9,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 
 
-public class Main {
+public class GameDisplay {
 
-    public Main(){
+    public GameDisplay(){
 
         try {
 
-         Display.create();
+            Display.create();
 
         } catch (LWJGLException e) {
 
@@ -26,6 +26,6 @@ public class Main {
 
 
     public static void main(String[] args){
-        new Main();
+        GameDisplay gameDisplay = new GameDisplay();
     }
 }

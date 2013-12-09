@@ -53,6 +53,7 @@ public class Sprite {
     /** The height in pixels of this sprite */
     private int			height;
 
+
     /**
      * Create a new sprite from a specified image.
      *
@@ -68,6 +69,7 @@ public class Sprite {
             ioe.printStackTrace();
             System.exit(-1);
         }
+
     }
 
     /**
@@ -124,4 +126,5 @@ public class Sprite {
         // restore the model view matrix to prevent contamination
         glPopMatrix();
     }
+
 }

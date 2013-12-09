@@ -7,17 +7,29 @@
  */
 
 package org.lwjgl.lwjglgame;
+import org.dyn4j.collision.AxisAlignedBounds;
+import org.dyn4j.dynamics.Capacity;
+import org.dyn4j.dynamics.World;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
 
 
 public class GameDisplay {
 
-    private TextureLoader textureLoader = new TextureLoader();
-    private long mLastUpdateTime = System.currentTimeMillis();
+
+    private static long timerTicksPerSecond = Sys.getTimerResolution();
+    private long mLastUpdateTime = getTime();
+    private static boolean isStarted = true;
+    private World mWorld;
+    private Player simjen;
+
+    public static long getTime(){
+        //get Time in miliseconds
+        return (Sys.getTime() *1000) / timerTicksPerSecond;
+    }
 
     public void start(){
         try {
@@ -29,8 +41,31 @@ public class GameDisplay {
             e.printStackTrace();
 
         }
-        Player simjen = new Player(new Sprite(textureLoader, "ball.jpg"),new Position(100,100));
-        simjen.setMovement(new Vector2f(100,100));
+        simjen = new Player(0,0);
+        simjen.setMovement(100,100);
+        setupDyn4J();
+        initOpenGL();
+        gameLoop();
+    }
+
+    private void gameLoop() {
+        while(!Display.isCloseRequested()){
+            long time = getTime();
+            int deltaTime = (int)(time - mLastUpdateTime);
+            mLastUpdateTime = time;
+
+            // Clear the screen and depth buffer
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            simjen.updatePosition(deltaTime);
+            simjen.draw();
+
+            Display.update();
+            Display.sync(60);
+        }
+        Display.destroy();
+    }
+
+    private void initOpenGL() {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         // enable textures since we're going to use these for our sprites
@@ -40,22 +75,17 @@ public class GameDisplay {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glOrtho(0, 800, 0, 600, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        while(!Display.isCloseRequested()){
-            long deltaTime = (System.currentTimeMillis() - mLastUpdateTime)/1000;
+    }
 
-            // Clear the screen and depth buffer
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            GL11.glLoadIdentity();
-            simjen.draw();
-            simjen.updatePosition(deltaTime);
-            Display.update();
-        }
-        Display.destroy();
+    private void setupDyn4J() {
+        mWorld = new World(Capacity.DEFAULT_CAPACITY, new AxisAlignedBounds(800,600));
+        mWorld.addBody(simjen.getBody());
     }
 
     public static void main(String[] args){
         GameDisplay gameDisplay = new GameDisplay();
         gameDisplay.start();
+
     }
 
 }

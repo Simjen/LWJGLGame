@@ -1,5 +1,8 @@
 package org.lwjgl.lwjglgame;
 
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Convex;
+import org.dyn4j.geometry.Ellipse;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -9,25 +12,33 @@ import org.lwjgl.util.vector.Vector2f;
  * Time: 21:15
  */
 public class Player implements MovingObject {
-    private Vector2f mMovementVector;
+    private int mX;
+    private int mY;
+    private double mDx;
+    private double mDy;
     private double mDirection;
     private Sprite mPlayerSprite;
-    private Position mPlayerPosition;
+    private TextureLoader textureLoader = new TextureLoader();
+    private Convex mPlayerShape;
+    private Body mPlayerBody;
 
-    public Player(Sprite playerSprite, Position playerPosition){
-        mMovementVector = new Vector2f(0,0);
+    public Player(int x, int y){
         mDirection = 0;
-        mPlayerSprite = playerSprite;
-        mPlayerPosition = playerPosition;
+        mPlayerSprite = new Sprite(textureLoader, "ball.jpg");
+        mPlayerShape = new Ellipse(mPlayerSprite.getWidth(),mPlayerSprite.getHeight());
+        mPlayerBody = new Body(1);
+        mPlayerBody.addFixture(mPlayerShape);
+
     }
     @Override
     public Vector2f getMovement() {
-        return mMovementVector;
+        return null;
     }
 
     @Override
-    public void setMovement(Vector2f movementVector) {
-        mMovementVector = movementVector;
+    public void setMovement(double dx, double dy) {
+        mDx = dx;
+        mDy = dy;
     }
 
     @Override
@@ -37,12 +48,18 @@ public class Player implements MovingObject {
 
 
     @Override
-    public void updatePosition(long detaTime) {
-        mPlayerPosition.updatePosition(mMovementVector , detaTime);
+    public void updatePosition(double deltaTime) {
+        mX += (int)(mDx * deltaTime)/1000;
+        mY += (int)(mDy * deltaTime)/1000;
+    }
+
+    @Override
+    public Body getBody() {
+        return mPlayerBody;
     }
 
     public void draw(){
-        mPlayerSprite.draw(mPlayerPosition.getX(),mPlayerPosition.getY());
+        mPlayerSprite.draw(mX,mY);
     }
 
 }

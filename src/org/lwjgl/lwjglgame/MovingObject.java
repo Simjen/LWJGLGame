@@ -1,5 +1,6 @@
 package org.lwjgl.lwjglgame;
 
+import org.dyn4j.dynamics.Body;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -12,9 +13,11 @@ public interface MovingObject {
 
     public Vector2f getMovement();
 
-    public void setMovement(Vector2f v);
+    public void setMovement(double dx, double dy);
 
     public double getDirection();
 
-    public void updatePosition(long detaTime );
+    public void updatePosition(double detaTime );
+
+    public Body getBody();
 }

@@ -3,6 +3,7 @@ package org.lwjgl.lwjglgame;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Ellipse;
+import org.dyn4j.geometry.Transform;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -28,6 +29,7 @@ public class Player implements MovingObject {
         mPlayerShape = new Ellipse(mPlayerSprite.getWidth(),mPlayerSprite.getHeight());
         mPlayerBody = new Body(1);
         mPlayerBody.addFixture(mPlayerShape);
+        mPlayerShape.translate(x,y);
 
     }
     @Override
@@ -37,8 +39,7 @@ public class Player implements MovingObject {
 
     @Override
     public void setMovement(double dx, double dy) {
-        mDx = dx;
-        mDy = dy;
+        mPlayerBody.setLinearVelocity(dx,dy);
     }
 
     @Override
@@ -48,9 +49,12 @@ public class Player implements MovingObject {
 
 
     @Override
-    public void updatePosition(double deltaTime) {
-        mX += (int)(mDx * deltaTime)/1000;
-        mY += (int)(mDy * deltaTime)/1000;
+    public void updatePosition() {
+
+        Transform mPlayerBodyTransform = mPlayerBody.getTransform();
+
+        mX = (int) mPlayerBodyTransform.getTranslationX();
+        mY = (int) mPlayerBodyTransform.getTranslationY();
     }
 
     @Override

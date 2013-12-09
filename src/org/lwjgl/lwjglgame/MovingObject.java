@@ -17,7 +17,7 @@ public interface MovingObject {
 
     public double getDirection();
 
-    public void updatePosition(double detaTime );
+    public void updatePosition();
 
     public Body getBody();
 }

@@ -60,6 +60,7 @@ public class GameImpl implements Game{
             simjen.draw();
             Display.update();
             Display.sync(60);
+
         }
         Display.destroy();
     }

@@ -9,7 +9,6 @@
 package org.lwjgl.lwjglgame;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.dynamics.Capacity;
-import org.dyn4j.dynamics.Settings;
 import org.dyn4j.dynamics.World;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -18,7 +17,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 
-public class GameDisplay {
+public class GameImpl implements Game{
 
 
     private static long timerTicksPerSecond = Sys.getTimerResolution();
@@ -28,7 +27,7 @@ public class GameDisplay {
     private Player simjen;
 
 
-    public static long getTime(){
+    public long getTime(){
         //get Time in miliseconds
         return (Sys.getTime() *1000) / timerTicksPerSecond;
     }
@@ -57,12 +56,17 @@ public class GameDisplay {
 
             // Clear the screen and depth buffer
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            mWorld.update(deltaTime);
+            update(deltaTime);
             simjen.draw();
             Display.update();
             Display.sync(60);
         }
         Display.destroy();
+    }
+
+    @Override
+    public void update(int deltaTime) {
+        mWorld.update(deltaTime);
     }
 
     private void initOpenGL() {
@@ -83,7 +87,7 @@ public class GameDisplay {
     }
 
     public static void main(String[] args){
-        GameDisplay gameDisplay = new GameDisplay();
+        GameImpl gameDisplay = new GameImpl();
         gameDisplay.start();
 
     }

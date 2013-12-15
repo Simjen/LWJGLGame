@@ -9,6 +9,7 @@
 package org.lwjgl.lwjglgame;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.dynamics.Capacity;
+import org.dyn4j.dynamics.Settings;
 import org.dyn4j.dynamics.World;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -26,6 +27,7 @@ public class GameDisplay {
     private World mWorld;
     private Player simjen;
 
+
     public static long getTime(){
         //get Time in miliseconds
         return (Sys.getTime() *1000) / timerTicksPerSecond;
@@ -41,8 +43,7 @@ public class GameDisplay {
             e.printStackTrace();
 
         }
-        simjen = new Player(0,0);
-        simjen.setMovement(100,100);
+        simjen = new Player();
         setupDyn4J();
         initOpenGL();
         gameLoop();
@@ -56,10 +57,8 @@ public class GameDisplay {
 
             // Clear the screen and depth buffer
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            mWorld.updatev(deltaTime);
-            simjen.updatePosition();
+            mWorld.update(deltaTime);
             simjen.draw();
-
             Display.update();
             Display.sync(60);
         }
@@ -80,7 +79,7 @@ public class GameDisplay {
 
     private void setupDyn4J() {
         mWorld = new World(Capacity.DEFAULT_CAPACITY, new AxisAlignedBounds(800,600));
-        mWorld.addBody(simjen.getBody());
+        mWorld.addBody(simjen.getPlayerBody());
     }
 
     public static void main(String[] args){

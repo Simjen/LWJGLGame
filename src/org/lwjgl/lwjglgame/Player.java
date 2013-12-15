@@ -1,9 +1,12 @@
 package org.lwjgl.lwjglgame;
 
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Ellipse;
-import org.dyn4j.geometry.Transform;
+import org.dyn4j.geometry.Mass;
+import org.dyn4j.geometry.Vector2;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -13,6 +16,8 @@ import org.lwjgl.util.vector.Vector2f;
  * Time: 21:15
  */
 public class Player implements MovingObject {
+    private int mDisplayWidthOffset = Display.getWidth()/2;
+    private int mDisplayHeightOffset = Display.getHeight()/2;
     private int mX;
     private int mY;
     private double mDx;
@@ -21,25 +26,19 @@ public class Player implements MovingObject {
     private Sprite mPlayerSprite;
     private TextureLoader textureLoader = new TextureLoader();
     private Convex mPlayerShape;
-    private Body mPlayerBody;
+    private Body mPlayerBody = new Body();
 
-    public Player(int x, int y){
-        mDirection = 0;
+    public Player(){
         mPlayerSprite = new Sprite(textureLoader, "ball.jpg");
         mPlayerShape = new Ellipse(mPlayerSprite.getWidth(),mPlayerSprite.getHeight());
-        mPlayerBody = new Body(1);
-        mPlayerBody.addFixture(mPlayerShape);
-        mPlayerShape.translate(x,y);
-
+        mPlayerBody.addFixture(new BodyFixture(mPlayerShape));
+        mPlayerBody.translate(-mDisplayWidthOffset,-mDisplayHeightOffset);
+        mPlayerBody.setMass(Mass.Type.NORMAL);
     }
+
     @Override
     public Vector2f getMovement() {
         return null;
-    }
-
-    @Override
-    public void setMovement(double dx, double dy) {
-        mPlayerBody.setLinearVelocity(dx,dy);
     }
 
     @Override
@@ -47,23 +46,20 @@ public class Player implements MovingObject {
         return mDirection;
     }
 
-
     @Override
-    public void updatePosition() {
-
-        Transform mPlayerBodyTransform = mPlayerBody.getTransform();
-
-        mX = (int) mPlayerBodyTransform.getTranslationX();
-        mY = (int) mPlayerBodyTransform.getTranslationY();
+    public void setMovement(int x, int y){
+        mPlayerBody.setLinearVelocity(x,y);
     }
 
-    @Override
-    public Body getBody() {
+    public Body getPlayerBody(){
         return mPlayerBody;
     }
 
+
     public void draw(){
-        mPlayerSprite.draw(mX,mY);
+        int x = (int)mPlayerBody.getTransform().getTranslationX() + mDisplayWidthOffset;
+        int y = (int)mPlayerBody.getTransform().getTranslationY() + mDisplayHeightOffset;
+        mPlayerSprite.draw(x,y);
     }
 
 }
